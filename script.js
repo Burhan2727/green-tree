@@ -9,6 +9,13 @@ const manageSpinner = (status)=>{
     }
 }
 // loading funtion end
+// remove active function start
+const removeActive = ()=>{
+  document.querySelectorAll(".btn-categories").forEach(btnCategorie => {
+    btnCategorie.classList.remove("active")
+  })
+}
+// remove active function end
 // all categories functionality start
 const loadCategories = () => {
   fetch("https://openapi.programming-hero.com/api/categories")
@@ -22,7 +29,7 @@ const displayCategories = (categories) => {
   for (const categori of categories) {
     const btnDiv = document.createElement("div")
     btnDiv.innerHTML = `
-    <a onclick="categoriLoadData(${categori.id})" id="btn-active-${categori.id}" class=" hover:bg-[#15803D] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3">${categori.category_name}
+    <a onclick="categoriLoadData(${categori.id})" id="btn-categories-${categori.id}" class=" hover:bg-[#15803D] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3 md:mb-5 btn-categories">${categori.category_name}
     </a>
     `;
     categoriesContainer.appendChild(btnDiv)
@@ -31,10 +38,15 @@ const displayCategories = (categories) => {
 };
 const categoriLoadData = (id)=>{
   manageSpinner(true)
+  removeActive()
   const url = `https://openapi.programming-hero.com/api/category/${id}`
   fetch(url)
   .then(res => res.json())
-  .then(data => displayCategoriData(data.plants))
+  .then(data => {
+    const btnCategorie = document.getElementById(`btn-categories-${id}`)
+    btnCategorie.classList.add("active")
+    displayCategoriData(data.plants)
+  })
 }
 const displayCategoriData = (plants)=>{
   const plantsCard = document.getElementById("plants-card");
