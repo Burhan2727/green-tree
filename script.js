@@ -29,7 +29,7 @@ const displayCategories = (categories) => {
   for (const categori of categories) {
     const btnDiv = document.createElement("div")
     btnDiv.innerHTML = `
-    <a onclick="categoriLoadData(${categori.id})" id="btn-categories-${categori.id}" class=" hover:bg-[#15803D] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3 m-1 md:mb-3 btn-categories">${categori.category_name}
+    <a onclick="categoriLoadData(${categori.id})" id="btn-categories-${categori.id}" class=" hover:bg-[#05b646] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3 m-1 md:mb-3 btn-categories">${categori.category_name}
     </a>
     `;
     categoriesContainer.appendChild(btnDiv)
