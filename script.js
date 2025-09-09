@@ -29,7 +29,7 @@ const displayCategories = (categories) => {
   for (const categori of categories) {
     const btnDiv = document.createElement("div")
     btnDiv.innerHTML = `
-    <a onclick="categoriLoadData(${categori.id})" id="btn-categories-${categori.id}" class=" hover:bg-[#15803D] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3 md:mb-5 btn-categories">${categori.category_name}
+    <a onclick="categoriLoadData(${categori.id})" id="btn-categories-${categori.id}" class=" hover:bg-[#15803D] hover:text-white md:w-full text-[#1F2937] cursor-pointer inline-block md:block rounded-sm p-3 m-1 md:mb-3 btn-categories">${categori.category_name}
     </a>
     `;
     categoriesContainer.appendChild(btnDiv)
@@ -69,7 +69,7 @@ const displayCategoriData = (plants)=>{
                   >
                   <p class="font-semibold text-lg">৳<span>${plant.price}</span></p>
                 </div>
-                <button class="btn bg-[#15803D] w-full rounded-2xl text-white">
+                <button onclick="cartHandle(${plant.id})" class="btn bg-[#15803D] w-full rounded-2xl text-white">
                   Add to Cart
                 </button>
               </div>
@@ -83,11 +83,6 @@ const displayCategoriData = (plants)=>{
 loadCategories();
 // all categories functionality end
 
-
-
-// categories plants funtionality start
-// categories plants funtionality end
-
 // all plants funtionality start
 const loadPlants = ()=>{
   manageSpinner(true)
@@ -95,18 +90,11 @@ const loadPlants = ()=>{
   .then(res => res.json())
   .then(data => displayPlants(data.plants))
 }
-// {
-//     "id": 1,
-//     "image": "https://i.ibb.co.com/cSQdg7tf/mango-min.jpg",
-//     "name": "Mango Tree",
-//     "description": "A fast-growing tropical tree that produces delicious, juicy mangoes during summer. Its dense green canopy offers shade, while its sweet fruits are rich in vitamins and minerals.",
-//     "category": "Fruit Tree",
-//     "price": 500
-// }
 const displayPlants = (plants)=>{
   // console.log(plants)
   const plantsCard = document.getElementById("plants-card");
   for(const plant of plants){
+    const cartObj = {name: plant.name, price: plant.price}
     const plantDiv = document.createElement("div");
     plantDiv.innerHTML = `
     <div class="bg-white p-3 rounded-lg space-y-3 h-full flex flex-col">
@@ -124,7 +112,7 @@ const displayPlants = (plants)=>{
                   >
                   <p class="font-semibold text-lg">৳<span>${plant.price}</span></p>
                 </div>
-                <button class="btn bg-[#15803D] w-full rounded-2xl text-white">
+                <button onclick="cartHandle(${plant.id})" class="btn bg-[#15803D] w-full rounded-2xl text-white">
                   Add to Cart
                 </button>
               </div>
@@ -137,14 +125,7 @@ const displayPlants = (plants)=>{
 }
 loadPlants()
 // all plants funtionality end
-// {
-//     "id": 30,
-//     "image": "https://i.ibb.co.com/0jLycYdv/Water-Hyacinth-min.jpg",
-//     "name": "Water Hyacinth",
-//     "description": "A floating plant with violet flowers that provide shade to aquatic creatures. Known for rapid growth in ponds.",
-//     "category": "Aquatic Plant",
-//     "price": 250
-// }
+
 // plants modal funtionality start
 const treeLoadDetails = (id)=>{
   const url = `https://openapi.programming-hero.com/api/plant/${id}`
@@ -174,3 +155,58 @@ const displayTreeDetails = (tree)=>{
 }
 
 // plants modal funtionality end
+
+
+// cart functionality start
+
+const cartHandle = (id)=>{
+  const url = `https://openapi.programming-hero.com/api/plant/${id}`
+  fetch(url)
+  .then(res => res.json())
+  .then(data => {
+    
+    displayCart(data.plants)
+  })
+  
+}
+let totalPrice = 0
+const displayCart = (plant)=>{
+  alert( `${plant.name} has been added your cart` )
+  document.getElementById("total-container").classList.remove("hidden")
+  const rightContainer = document.getElementById("right-container");
+  const div = document.createElement("div");
+  div.innerHTML = `
+  <div id="right-content-${plant.id}"
+                class="right-content bg-[#F0FDF4] flex justify-between items-center mb-1 p-2 rounded-lg"
+              >
+                <div>
+                  <h2 class="font-semibold text-sm"> ${plant.name} </h2>
+                <p class="text-gray-400">৳ <span id="plant-price-${plant.id}">${plant.price}</span> </p>
+                </div>
+                <button onclick="crossHandle(${plant.id})" id="cross-${plant.id}" class="cursor-pointer text-red-500">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+            
+  `
+  rightContainer.prepend(div)
+  let price = parseInt(`${plant.price}`)
+  totalPrice = totalPrice + price;
+  document.getElementById("price").innerText = totalPrice
+  console.log(totalPrice)
+  // console.log(price)
+  
+}
+const crossHandle = (id)=>{
+  const removePriceValue = document.getElementById(`plant-price-${id}`).innerText;
+  const removePriceValueNumber = parseInt(removePriceValue)
+  totalPrice = totalPrice - removePriceValueNumber;
+  document.getElementById("price").innerText = totalPrice
+  if(totalPrice === 0){
+    document.getElementById("total-container").classList.add("hidden")
+  }
+  const rightContent = document.getElementById(`right-content-${id}`)
+  rightContent.classList.add("hidden")
+}
+// cart functionality end
